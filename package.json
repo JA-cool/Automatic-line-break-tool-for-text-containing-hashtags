@@ -1,0 +1,25 @@
+{
+  "name": "text-processor-api",
+  "version": "1.0.0",
+  "description": "智能文本处理工具API - 支持#号标记和空格分隔自动换行",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vercel dev",
+    "build": "echo 'No build step required'",
+    "start": "vercel dev"
+  },
+  "keywords": [
+    "text-processing",
+    "api",
+    "vercel",
+    "javascript"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5"
+  },
+  "devDependencies": {
+    "@vercel/node": "^3.0.0"
+  }
+} 

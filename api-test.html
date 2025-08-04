@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API测试页面 - 文本处理工具</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            padding: 40px;
+        }
+
+        .section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            color: #333;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .input-area {
+            width: 100%;
+            min-height: 150px;
+            padding: 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 16px;
+            font-family: 'Courier New', monospace;
+            resize: vertical;
+        }
+
+        .select-mode {
+            width: 200px;
+            padding: 10px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #6c757d;
+            border: 1px solid #dee2e6;
+        }
+
+        .btn-secondary:hover {
+            background: #e9ecef;
+            transform: translateY(-1px);
+        }
+
+        .result-area {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            border: 2px solid #e1e5e9;
+            min-height: 100px;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .stat-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #6c757d;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .api-info {
+            background: #e3f2fd;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .api-info h3 {
+            color: #1976d2;
+            margin-bottom: 10px;
+        }
+
+        .code-block {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            overflow-x: auto;
+            margin: 10px 0;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            color: #667eea;
+        }
+
+        .error {
+            background: #ffebee;
+            color: #c62828;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            display: none;
+        }
+
+        .success {
+            background: #e8f5e8;
+            color: #2e7d32;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔧 API测试页面</h1>
+            <p>测试文本处理API功能</p>
+        </div>
+
+        <div class="main-content">
+            <div class="api-info">
+                <h3>📡 API端点信息</h3>
+                <p><strong>URL:</strong> <span id="apiUrl">https://your-project.vercel.app/api/process-text</span></p>
+                <p><strong>方法:</strong> POST</p>
+                <p><strong>Content-Type:</strong> application/json</p>
+                
+                <h4>请求示例:</h4>
+                <div class="code-block">
+{
+  "text": "#标题1 内容 #标题2 内容",
+  "mode": "auto"
+}
+                </div>
+                
+                <h4>响应示例:</h4>
+                <div class="code-block">
+{
+  "success": true,
+  "result": "标题1\n标题2",
+  "stats": {
+    "originalCount": 15,
+    "processedCount": 8,
+    "hashCount": 2,
+    "lineCount": 2
+  }
+}
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">🧪 API测试</div>
+                
+                <div class="input-group">
+                    <label for="testText">测试文本:</label>
+                    <textarea id="testText" class="input-area" placeholder="输入要测试的文本...">#标题1 这是第一个标题的内容 #标题2 这是第二个标题的内容 #标题3 这是第三个标题的内容</textarea>
+                </div>
+
+                <div class="input-group">
+                    <label for="testMode">处理模式:</label>
+                    <select id="testMode" class="select-mode">
+                        <option value="auto">自动检测</option>
+                        <option value="hash">#号标记模式</option>
+                        <option value="space">空格分隔模式</option>
+                    </select>
+                </div>
+
+                <div>
+                    <button class="btn btn-primary" onclick="testAPI()">🚀 测试API</button>
+                    <button class="btn btn-secondary" onclick="loadExample()">📋 加载示例</button>
+                    <button class="btn btn-secondary" onclick="clearTest()">🗑️ 清空</button>
+                </div>
+
+                <div id="loading" class="loading">
+                    <p>⏳ 正在处理中...</p>
+                </div>
+
+                <div id="error" class="error"></div>
+                <div id="success" class="success"></div>
+
+                <div class="section-title">📊 处理结果</div>
+                <div id="result" class="result-area">结果将显示在这里...</div>
+
+                <div class="stats-grid" id="statsGrid" style="display: none;">
+                    <div class="stat-item">
+                        <div class="stat-label">原始字符数</div>
+                        <div class="stat-value" id="originalCount">0</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">处理后字符数</div>
+                        <div class="stat-value" id="processedCount">0</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label"># 号数量</div>
+                        <div class="stat-value" id="hashCount">0</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">处理行数</div>
+                        <div class="stat-value" id="lineCount">0</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">减少字符数</div>
+                        <div class="stat-value" id="reduction">0</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">减少百分比</div>
+                        <div class="stat-value" id="reductionPercentage">0%</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 获取当前域名作为API基础URL
+        const baseUrl = window.location.origin;
+        document.getElementById('apiUrl').textContent = `${baseUrl}/api/process-text`;
+
+        async function testAPI() {
+            const text = document.getElementById('testText').value;
+            const mode = document.getElementById('testMode').value;
+            
+            if (!text.trim()) {
+                showError('请输入测试文本！');
+                return;
+            }
+
+            // 显示加载状态
+            showLoading(true);
+            hideMessages();
+
+            try {
+                const response = await fetch('/api/process-text', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        text: text,
+                        mode: mode
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showSuccess('API调用成功！');
+                    displayResult(data);
+                } else {
+                    showError(`API错误: ${data.message || data.error}`);
+                }
+
+            } catch (error) {
+                console.error('API调用失败:', error);
+                showError(`网络错误: ${error.message}`);
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        function displayResult(data) {
+            // 显示结果
+            document.getElementById('result').textContent = data.result;
+            
+            // 显示统计信息
+            const stats = data.stats;
+            document.getElementById('originalCount').textContent = stats.originalCount;
+            document.getElementById('processedCount').textContent = stats.processedCount;
+            document.getElementById('hashCount').textContent = stats.hashCount;
+            document.getElementById('lineCount').textContent = stats.lineCount;
+            document.getElementById('reduction').textContent = stats.reduction;
+            document.getElementById('reductionPercentage').textContent = stats.reductionPercentage + '%';
+            
+            // 显示统计网格
+            document.getElementById('statsGrid').style.display = 'grid';
+        }
+
+        function loadExample() {
+            const examples = [
+                '#标题1 这是第一个标题的详细内容 #标题2 第二个标题内容 #标题3 第三个标题',
+                '标题1 标题2 标题3 重要提示 总结',
+                '#项目名称 我的项目 #版本 1.0.0 #作者 张三 #描述 这是一个测试项目'
+            ];
+            
+            const randomExample = examples[Math.floor(Math.random() * examples.length)];
+            document.getElementById('testText').value = randomExample;
+        }
+
+        function clearTest() {
+            document.getElementById('testText').value = '';
+            document.getElementById('result').textContent = '结果将显示在这里...';
+            document.getElementById('statsGrid').style.display = 'none';
+            hideMessages();
+        }
+
+        function showLoading(show) {
+            document.getElementById('loading').style.display = show ? 'block' : 'none';
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('error');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+        }
+
+        function showSuccess(message) {
+            const successDiv = document.getElementById('success');
+            successDiv.textContent = message;
+            successDiv.style.display = 'block';
+        }
+
+        function hideMessages() {
+            document.getElementById('error').style.display = 'none';
+            document.getElementById('success').style.display = 'none';
+        }
+
+        // 页面加载时初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('API测试页面已加载');
+            console.log('API端点:', `${baseUrl}/api/process-text`);
+        });
+    </script>
+</body>
+</html> 
